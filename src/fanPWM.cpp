@@ -31,7 +31,9 @@ void updateFanSpeed(void){
 
 void updateMQTT_Screen_withNewPWMvalue(int aPWMvalue, bool force) {
   // note: it is not guaranteed that fan stops if pwm is set to 0
-  if (modeIsOff) {aPWMvalue = 0;}
+  if (modeIsOff) {
+    aPWMvalue = 0;
+  }
   if ((pwmValue != aPWMvalue) || force) {
     pwmValue = aPWMvalue;
     if (pwmValue < 0) {pwmValue = 0;};

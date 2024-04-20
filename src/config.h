@@ -33,10 +33,10 @@
      Target temperature: the target temperature will be tried to reach. The target temmperate can be provided via mqtt, via a touch display or both.
 */
 // --- Begin: list of presets. Choose exactly one. ---
-#define fan_controlledByMQTT
+//#define fan_controlledByMQTT
 //#define fan_controlledByTouch
 //#define fan_controlledByMQTTandTouch
-//#define climate_controlledByBME_targetByMQTT
+#define climate_controlledByBME_targetByMQTT
 //#define climate_controlledByBME_targetByTouch
 //#define climate_controlledByBME_targetByMQTTandTouch
 //#define climate_controlledByMQTT_targetByMQTT
@@ -49,7 +49,8 @@
   #define useAutomaticTemperatureControl
   #if defined(climate_controlledByBME_targetByMQTT) || defined(climate_controlledByBME_targetByTouch) || defined(climate_controlledByBME_targetByMQTTandTouch)
     #define setActualTemperatureViaBME280
-    #define useTemperatureSensorBME280
+    //define useTemperatureSensorBME280
+    #define useThermistor
   #endif
   #if defined(climate_controlledByMQTT_targetByMQTT) || defined(climate_controlledByMQTT_targetByMQTTandTouch)
     #define setActualTemperatureViaMQTT
@@ -148,14 +149,14 @@ static_assert(false, "You cannot have both \"#define useStandbyButton\" and \"#d
 
 // --- fan specs ----------------------------------------------------------------------------------------------------------------------------
 // fanPWM
-#define PWMPIN               GPIO_NUM_17
+#define PWMPIN               GPIO_NUM_15
 #define PWMFREQ              25000
 #define PWMCHANNEL           0
 #define PWMRESOLUTION        8
-#define FANMAXRPM            1500         // only used for showing at how many percent fan is running
+#define FANMAXRPM            2250         // only used for showing at how many percent fan is running
 
 // fanTacho
-#define TACHOPIN                             GPIO_NUM_16
+#define TACHOPIN                             GPIO_NUM_4
 #define TACHOUPDATECYCLE                     1000 // how often tacho speed shall be determined, in milliseconds
 #define NUMBEROFINTERRUPSINONESINGLEROTATION 2    // Number of interrupts ESP32 sees on tacho signal on a single fan rotation. All the fans I've seen trigger two interrups.
 
@@ -169,27 +170,27 @@ static_assert(false, "You cannot have both \"#define useStandbyButton\" and \"#d
 
 #ifdef useAutomaticTemperatureControl
 // initial target temperature on startup
-#define INITIALTARGETTEMPERATURE 27.0
+#define INITIALTARGETTEMPERATURE 50.0
 // Lowest pwm value the temperature controller should use to set fan speed. If you want the fan not to turn off, set a value so that fan always runs.
-#define PWMMINIMUMVALUE            120
+#define PWMMINIMUMVALUE            60
 #else
 // delta used when manually increasing or decreasing pwm
 #define PWMSTEP                    10
 #endif
 
 // initial pwm fan speed on startup (0 <= value <= 255)
-#define INITIALPWMVALUE            120
+#define INITIALPWMVALUE            60
 
 // sanity check
-#if !defined(setActualTemperatureViaBME280) && !defined(setActualTemperatureViaMQTT) && defined(useAutomaticTemperatureControl)
-static_assert(false, "You have to use \"#define setActualTemperatureViaBME280\" or \"#define setActualTemperatureViaMQTT\" when having \"#define useAutomaticTemperatureControl\"");
-#endif
-#if defined(setActualTemperatureViaBME280) && !defined(useTemperatureSensorBME280)
-static_assert(false, "You have to use \"#define useTemperatureSensorBME280\" when having \"#define setActualTemperatureViaBME280\"");
-#endif
-#if defined(setActualTemperatureViaBME280) && defined(setActualTemperatureViaMQTT)
-static_assert(false, "You cannot have both \"#define setActualTemperatureViaBME280\" and \"#define setActualTemperatureViaMQTT\"");
-#endif
+// #if !defined(setActualTemperatureViaBME280) && !defined(setActualTemperatureViaMQTT) && defined(useAutomaticTemperatureControl)
+// static_assert(false, "You have to use \"#define setActualTemperatureViaBME280\" or \"#define setActualTemperatureViaMQTT\" when having \"#define useAutomaticTemperatureControl\"");
+// #endif
+// #if defined(setActualTemperatureViaBME280) && !defined(useTemperatureSensorBME280)
+// static_assert(false, "You have to use \"#define useTemperatureSensorBME280\" when having \"#define setActualTemperatureViaBME280\"");
+// #endif
+// #if defined(setActualTemperatureViaBME280) && defined(setActualTemperatureViaMQTT)
+// static_assert(false, "You cannot have both \"#define setActualTemperatureViaBME280\" and \"#define setActualTemperatureViaMQTT\"");
+// #endif
 
 // --- temperature sensor BME280 ------------------------------------------------------------------------------------------------------------
 
@@ -243,7 +244,7 @@ static_assert(false, "You cannot use \"#define useOTA_RTOS\" without \"#define u
 #define UNIQUE_DEVICE_FRIENDLYNAME "Fan Controller"       // override it in file "config_override.h"
 #define UNIQUE_DEVICE_NAME         "esp32_fan_controller" // override it in file "config_override.h"
 
-#define MQTT_SERVER            "IPAddressOfYourBroker"    // override it in file "config_override.h"
+#define MQTT_SERVER            "192.168.1.40"    // override it in file "config_override.h"
 #define MQTT_SERVER_PORT       1883                       // override it in file "config_override.h"
 #define MQTT_USER              ""                         // override it in file "config_override.h"
 #define MQTT_PASS              ""                         // override it in file "config_override.h"

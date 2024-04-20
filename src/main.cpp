@@ -10,6 +10,7 @@
 #include "temperatureController.h"
 #include "tft.h"
 #include "tftTouch.h"
+#include "thermistor.h"
 
 #if defined(useOTAUpdate)
   // https://github.com/SensorsIot/ESP32-OTA
@@ -55,6 +56,9 @@ void setup(){
   #ifdef useTemperatureSensorBME280
   initBME280();
   #endif
+  #ifdef useThermistor
+  initThermistor();
+  #endif
   #ifdef useAutomaticTemperatureControl
   initTemperatureController();
   #endif
@@ -86,9 +90,12 @@ void loop(){
   // functions that shall be called every 1000 ms
   if ((currentMillis - previousMillis1000Cycle) >= interval1000Cycle) {
     previousMillis1000Cycle = currentMillis;
+    #ifdef useThermistor
+    updateThermistor();
+    #endif
 
     #ifdef useTemperatureSensorBME280
-    updateBME280();
+    //updateBME280();
     #endif
     #ifdef useAutomaticTemperatureControl
     setFanPWMbasedOnTemperature();

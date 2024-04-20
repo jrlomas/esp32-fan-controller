@@ -21,8 +21,8 @@ If you add additional overrides here, you have to
 #undef LED_ON
 
 #ifdef useWIFI
-#define WIFI_SSID            "YourWifiSSID"          // override here
-#define WIFI_PASSWORD        "YourWifiPassword"      // override here
+#define WIFI_SSID            "tjca"          // override here
+#define WIFI_PASSWORD        "88288806"      // override here
 #endif
 
 #ifdef useMQTT
